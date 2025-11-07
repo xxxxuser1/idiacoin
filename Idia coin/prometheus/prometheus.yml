@@ -1,0 +1,32 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - 'rules/*.yml'
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093']
+
+scrape_configs:
+  - job_name: 'idia-node'
+    static_configs:
+      - targets: ['idia-node:8081']  # Assuming metrics endpoint on RPC port
+    metrics_path: '/metrics'
+    scrape_interval: 5s
+    scheme: 'http'
+    honor_labels: true
+
+  - job_name: 'idia-network'
+    static_configs:
+      - targets: ['idia-node:8081']
+    metrics_path: '/network_metrics'
+    scrape_interval: 30s
+
+  - job_name: 'tor-metrics'
+    static_configs:
+      - targets: ['tor:9051']
+    metrics_path: '/metrics'
+    scrape_interval: 60s

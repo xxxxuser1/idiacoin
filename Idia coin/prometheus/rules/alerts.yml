@@ -1,0 +1,38 @@
+groups:
+- name: IdiaAlerts
+  rules:
+  - alert: HighTransactionVolume
+    expr: rate(idia_transactions_processed_total[5m]) > 100
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: High transaction volume detected
+      description: Transaction rate exceeds 100/sec for 5 minutes
+
+  - alert: AnomalousTransactionSize
+    expr: idia_transaction_size_bytes > 1000000
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: Unusually large transaction detected
+      description: Transaction size exceeds normal parameters
+
+  - alert: PrivacyFeatureFailure
+    expr: idia_privacy_feature_errors_total > 0
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: Privacy feature failure detected
+      description: Critical privacy feature is not functioning correctly
+
+  - alert: ComplianceCheckFailure
+    expr: idia_compliance_check_failures_total > 0
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: Compliance check failure
+      description: Regulatory compliance check has failed

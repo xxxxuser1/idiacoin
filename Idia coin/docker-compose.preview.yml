@@ -1,0 +1,66 @@
+services:
+  # Main Idia Node
+  idia-node:
+    build: .
+    ports:
+      - "8080:8080"  # P2P port
+      - "8081:8081"  # RPC port
+    environment:
+      - RUST_LOG=info
+      - NETWORK=testnet
+    volumes:
+      - idia-data:/var/lib/idia
+      - ./scripts:/scripts:ro
+    command: ["./idia-node", "--testnet", "--dev-mode"]
+
+  # Local Explorer
+  explorer:
+    build: ./explorer
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_URL=http://idia-node:8081
+    depends_on:
+      - idia-node
+
+  # Test Wallet Interface
+  wallet-ui:
+    build: ./wallet
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_URL=http://idia-node:8081
+    depends_on:
+      - idia-node
+
+  # Test DEX Interface
+  dex-ui:
+    build: ./dex
+    ports:
+      - "3002:3002"
+    environment:
+      - NODE_URL=http://idia-node:8081
+    depends_on:
+      - idia-node
+
+  # Metrics
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus:/etc/prometheus
+    depends_on:
+      - idia-node
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3003:3003"
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+    depends_on:
+      - prometheus
+
+volumes:
+  idia-data:

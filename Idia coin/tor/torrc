@@ -1,0 +1,22 @@
+# Basic Tor configuration for Idia node
+SOCKSPort 9050
+ControlPort 9051
+CookieAuthentication 1
+
+# Only allow connections through Tor
+SocksPolicy accept 127.0.0.1
+SocksPolicy reject *
+
+# Run as a hidden service (optional)
+#HiddenServiceDir /var/lib/tor/idia-service/
+#HiddenServicePort 8080 127.0.0.1:8080
+
+# Security settings
+SafeLogging 1
+RunAsDaemon 0
+DataDirectory /var/lib/tor
+
+# Connection settings
+CircuitBuildTimeout 60
+KeepalivePeriod 60
+NewCircuitPeriod 900

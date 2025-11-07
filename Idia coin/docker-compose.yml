@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  idia-node:
+    build: .
+    volumes:
+      - idia-data:/var/lib/idia
+      - tor-data:/var/lib/tor
+    ports:
+      - "8080:8080"  # P2P port
+      - "8081:8081"  # RPC port
+    environment:
+      - RUST_LOG=info
+    restart: unless-stopped
+    depends_on:
+      - tor
+
+  tor:
+    image: dperson/tor
+    volumes:
+      - tor-data:/var/lib/tor
+      - ./tor/torrc:/etc/tor/torrc
+    restart: unless-stopped
+
+volumes:
+  idia-data:
+  tor-data:
